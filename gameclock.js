@@ -8,13 +8,13 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
   var offset;
   var myInterval;
   var callback;
-  var render, handleQuarter, handleHalftime, handleEnd; // callbacks;
+  var handleRender, handleQuarter, handleHalftime, handleEnd; // callbacks;
 
   if (renderCallback){
     if (typeof renderCallback !== "function"){
       throw 'renderCallback is not a function';
     }
-    render = renderCallback;
+    handleRender = renderCallback;
   }
 
   if (quarterCallback){
@@ -39,19 +39,13 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     handleEnd = endCallback;
   }
 
-  var setTime = function(newTime){
-    clock = moment(newTime, "mm:ss Z");
+  var render = function(){
+    // Render
+    if (handleRender) handleRender(moment(clock).format('mm:ss'));
   };
 
-  var reset = function(){
-    stop();
-    clock = qtrLength;
-  };
-
-  var update = function(){
-    clock = clock - deltaTime();
-
-    // Handle quarters
+  var handleEvents = function(){
+    // Handle events
     if (clock < moment("00:00", "mm:ss Z")){
       reset();
       qtrCount = qtrCount + 1;
@@ -63,37 +57,64 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
         if (handleQuarter) handleQuarter(qtrCount);
       }
     }
+  }
 
-    // Render
-    if (render) render(moment(clock).format('mm:ss'));
+  var reset = function(){
+      clock = qtrLength;
+      render();
+  };
+
+  var addSeconds = function(n){
+    clock = clock + (n * 1000);
+    render();
+  };
+
+  var setTime = function(newTime){
+    clock = moment(newTime, "mm:ss Z");
+    render();
+  };
+
+  var update = function(){
+    var now = Date.now();
+    var deltaTime = now - offset;
+    offset = now;
+
+    clock = clock - deltaTime;
+    handleEvents();
+    render();
+  };
+
+  var toggle = function(){
+    if(!myInterval) {
+      start();
+    } else {
+      stop();
+    }
+    render();
   };
 
   var start = function(){
     if(!myInterval) {
       offset = Date.now();
       myInterval = setInterval(update, 100);
-      update();
+      render();
     }
-  };
-
-  var deltaTime = function() {
-    var now = Date.now();
-    var d = now - offset;
-    offset = now;
-    return d;
   };
 
   var stop = function(){
     clearInterval(myInterval);
     myInterval = null;
     offset = null;
+    render();
   };
 
   return {
     start: start,
     stop: stop,
+    toggle: toggle,
     reset: reset,
-    setTime: setTime
+    setTime: setTime,
+    addSeconds: addSeconds
   };
 }
 
