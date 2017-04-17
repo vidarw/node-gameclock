@@ -39,6 +39,7 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     handleEnd = endCallback;
   }
 
+  var setTime = function(newTime){
     clock = moment(newTime, "mm:ss Z");
   };
 
@@ -92,6 +93,7 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     start: start,
     stop: stop,
     reset: reset,
+    setTime: setTime
   };
 }
 
