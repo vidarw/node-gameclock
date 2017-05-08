@@ -35,6 +35,7 @@ io.on('connection', function(socket){ /* … */
     console.log('command', cmd);
     if (cmd === 'toggle') clock.toggle();
     if (cmd === 'reset') clock.reset();
+    if (cmd === 'resetFull') clock.resetFull();
     if (cmd === 'addOne') clock.addSeconds(1);
     if (cmd === 'addTen') clock.addSeconds(10);
     if (cmd === 'removeOne') clock.addSeconds(-1);

@@ -73,6 +73,12 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     }
   }
 
+  var resetFull = function(){
+      clock = qtrLength;
+      qtrCount = 1;
+      render();
+  };
+
   var reset = function(){
       clock = qtrLength;
       render();
@@ -129,6 +135,7 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     stop: stop,
     toggle: toggle,
     reset: reset,
+    resetFull: resetFull,
     setTime: setTime,
     addSeconds: addSeconds
   };

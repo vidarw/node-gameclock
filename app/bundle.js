@@ -57,14 +57,21 @@
 	  quarterElement.innerHTML = 'PERIOD ' + data.quarter;
 	});
 
-	alert("Commands:\n\n<Space> Start/Stop\n<Backspace> Reset\n<+> Add 1 second\n<Shift><+> Add 10 seconds\n<-> Remove 1 second\n<Shift><-> Remove 10 seconds");
+	alert("Commands:\n\n<Space> Start/Stop\n<Backspace> Reset period\n<Shift><Backspace> Reset clock\n<+> Add 1 second\n<Shift><+> Add 10 seconds\n<-> Remove 1 second\n<Shift><-> Remove 10 seconds");
 
 	document.addEventListener("keydown", function(event){
 	    if (event.key === " "){
 	      socket.emit('command', 'toggle');
 	    } else if (event.key === "Backspace") {
-	      console.log("Resetting clock");
-	      socket.emit('command', 'reset');
+	      if (event.shiftKey){
+	        console.log("Resetting clock");
+	        socket.emit('command', 'resetFull');
+	        //clock.addSeconds(10);
+	      } else {
+	        console.log("Reseting period");
+	        socket.emit('command', 'reset');
+	        //clock.addSeconds(1);
+	      }
 	    } else if (event.key === "+") {
 	      if (event.shiftKey){
 	        console.log("Adding ten seconds");
