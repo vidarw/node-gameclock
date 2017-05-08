@@ -2,6 +2,14 @@
 
 var moment = require('moment');
 var GameClock = function(quarterLength, renderCallback, quarterCallback, halftimeCallback, endCallback) {
+  const initialScore = 0;
+  const initialTimeouts = 3;
+
+  var possession = null;
+  var homeScore = initialScore;
+  var awayScore = initialScore;
+  var homeTimeouts = initialTimeouts;
+  var awayTimeouts = initialTimeouts;
   var qtrCount = 1; // Quarter counter
   var qtrLength = moment(quarterLength, "mm:ss Z");
   var clock = qtrLength; // quaterLength minutes in milliseconds
@@ -42,58 +50,99 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     // Render
     if (handleRender) handleRender({
       time: moment(clock).format('mm:ss'),
-      quarter: qtrCount
+      quarter: qtrCount,
+      possession: possession,
+      homeScore: homeScore,
+      homeTimeouts: homeTimeouts,
+      awayScore: awayScore,
+      awayTimeouts: awayTimeouts
     });
   };
 
   var handleEvents = function(){
     // Handle events
     if (clock < moment("00:00", "mm:ss Z")){
+      if (qtrCount > 3){
+        resetFull();
+        if (handleEnd) handleEnd(qtrCount);
+        return;
+      } else if(qtrCount === 2){
+        resetTimeouts();
+        if (handleHalftime) handleHalftime(qtrCount);
+      } else {
+        if (handleQuarter) handleQuarter(qtrCount);
+      }
       qtrCount = qtrCount + 1;
-      reset();
-      if (qtrCount > 4){
-        if (handleEnd) handleEnd(qtrCount);
-      } else if(qtrCount === 3){
-        if (handleHalftime) handleHalftime(qtrCount);
-      } else {
-        if (handleQuarter) handleQuarter(qtrCount);
-      }
-    }
-
-    if (clock > moment(qtrLength, "mm:ss Z") && qtrCount > 1){
-      qtrCount = qtrCount - 1;
-      if (qtrCount > 4){
-        if (handleEnd) handleEnd(qtrCount);
-      } else if(qtrCount === 3){
-        if (handleHalftime) handleHalftime(qtrCount);
-      } else {
-        if (handleQuarter) handleQuarter(qtrCount);
-      }
-      reset();
+      resetPeriod();
+    } else if (clock > moment(qtrLength, "mm:ss Z")){
+      resetPeriod();
     }
   }
 
+  var resetTimeouts = function(){
+      homeTimeouts = initialTimeouts;
+      awayTimeouts = initialTimeouts;
+  };
+
+  var resetPeriod = function(){
+      clock = qtrLength;
+      render();
+  };
+
   var resetFull = function(){
+      stop();
       clock = qtrLength;
       qtrCount = 1;
+      homeScore = initialScore;
+      homeTimeouts = initialTimeouts;
+      awayScore = initialScore;
+      awayTimeouts = initialTimeouts;
+      possession = null;
       render();
-  };
-
-  var reset = function(){
-      clock = qtrLength;
-      render();
-  };
-
-  var addSeconds = function(n){
-    clock = clock + (n * 1000);
-    handleEvents();
-    render();
   };
 
   var setTime = function(newTime){
     clock = moment(newTime, "mm:ss Z");
     handleEvents();
     render();
+  };
+
+  var addTime = function(t){
+    clock = clock + (t * 1000);
+    handleEvents();
+    render();
+  };
+
+  var setHomeScore = function(n){
+    homeScore = n;
+  };
+
+  var addHomeScore = function(n){
+    homeScore = homeScore + n;
+  };
+
+  var setHomeTimeouts = function(n){
+    homeTimeouts = n;
+  }
+
+  var useHomeTimeout = function(){
+    if (homeTimeouts > 0) homeTimeouts = homeTimeouts - 1;
+  }
+
+  var setAwayScore = function(n){
+    awayScore = n;
+  };
+
+  var addAwayScore = function(n){
+    awayScore = awayScore + n;
+  };
+
+  var setAwayTimeouts = function(n){
+    awayTimeouts = n;
+  };
+
+  var useAwayTimeout = function(){
+    if (awayTimeouts > 0) awayTimeouts = awayTimeouts - 1;
   };
 
   var update = function(){
@@ -134,10 +183,18 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     start: start,
     stop: stop,
     toggle: toggle,
-    reset: reset,
+    resetPeriod: resetPeriod,
     resetFull: resetFull,
     setTime: setTime,
-    addSeconds: addSeconds
+    addTime: addTime,
+    setHomeScore: setHomeScore,
+    addHomeScore: addHomeScore,
+    setHomeTimeouts: setHomeTimeouts,
+    useHomeTimeout: useHomeTimeout,
+    setAwayScore: setAwayScore,
+    addAwayScore: addAwayScore,
+    setAwayTimeouts: setAwayTimeouts,
+    useAwayTimeout: useAwayTimeout
   };
 }
 

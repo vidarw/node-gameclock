@@ -46,5 +46,29 @@ document.addEventListener("keydown", function(event){
         socket.emit('command', 'removeOne');
         //clock.addSeconds(-1);
       }
+    } else if (event.key === "h") {
+      console.log("Adding home point");
+      socket.emit('command', 'addHomeScore');
+    } else if (event.key === "H") {
+      console.log("Removing home point");
+      socket.emit('command', 'removeHomeScore');
+    } else if (event.key === "n") {
+      console.log("Useing home timeout");
+      socket.emit('command', 'useHomeTimeout');
+    } else if (event.key === "N") {
+      console.log("Reset home timeouts");
+      socket.emit('command', 'resetHomeTimeouts');
+    } else if (event.key === "a") {
+      console.log("Adding away point");
+      socket.emit('command', 'addAwayScore');
+    } else if (event.key === "A") {
+      console.log("Removing away point");
+      socket.emit('command', 'removeAwayScore');
+    } else if (event.key === "z") {
+      console.log("Using away timeout");
+      socket.emit('command', 'useAwayTimeout');
+    } else if (event.key === "Z") {
+      console.log("Reset away timeouts");
+      socket.emit('command', 'resetAwayTimeouts');
     }
 });

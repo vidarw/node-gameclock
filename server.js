@@ -34,12 +34,20 @@ io.on('connection', function(socket){ /* … */
   socket.on('command', function(cmd){
     console.log('command', cmd);
     if (cmd === 'toggle') clock.toggle();
-    if (cmd === 'reset') clock.reset();
+    if (cmd === 'reset') clock.resetPeriod();
     if (cmd === 'resetFull') clock.resetFull();
-    if (cmd === 'addOne') clock.addSeconds(1);
-    if (cmd === 'addTen') clock.addSeconds(10);
-    if (cmd === 'removeOne') clock.addSeconds(-1);
-    if (cmd === 'removeTen') clock.addSeconds(-10);
+    if (cmd === 'addOne') clock.addTime(1);
+    if (cmd === 'addTen') clock.addTime(10);
+    if (cmd === 'removeOne') clock.addTime(-1);
+    if (cmd === 'removeTen') clock.addTime(-10);
+    if (cmd === 'addHomeScore') clock.addHomeScore(1);
+    if (cmd === 'removeHomeScore') clock.addHomeScore(-1);
+    if (cmd === 'useHomeTimeout') clock.useHomeTimeout();
+    if (cmd === 'resetHomeTimeouts') clock.setHomeTimeouts(3);
+    if (cmd === 'addAwayScore') clock.addAwayScore(1);
+    if (cmd === 'removeAwayScore') clock.addAwayScore(-1);
+    if (cmd === 'useAwayTimeout') clock.useAwayTimeout();
+    if (cmd === 'resetAwayTimeouts') clock.setAwayTimeouts(3);
   });
 });
 
