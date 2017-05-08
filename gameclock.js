@@ -31,7 +31,6 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
     handleHalftime = halftimeCallback;
   }
 
-
   if (endCallback){
     if (typeof endCallback !== "function"){
       throw 'endCallback is not a function';
@@ -41,14 +40,17 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
 
   var render = function(){
     // Render
-    if (handleRender) handleRender(moment(clock).format('mm:ss'));
+    if (handleRender) handleRender({
+      time: moment(clock).format('mm:ss'),
+      quarter: qtrCount
+    });
   };
 
   var handleEvents = function(){
     // Handle events
     if (clock < moment("00:00", "mm:ss Z")){
-      reset();
       qtrCount = qtrCount + 1;
+      reset();
       if (qtrCount > 4){
         if (handleEnd) handleEnd(qtrCount);
       } else if(qtrCount === 3){
@@ -56,6 +58,18 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
       } else {
         if (handleQuarter) handleQuarter(qtrCount);
       }
+    }
+
+    if (clock > moment(qtrLength, "mm:ss Z") && qtrCount > 1){
+      qtrCount = qtrCount - 1;
+      if (qtrCount > 4){
+        if (handleEnd) handleEnd(qtrCount);
+      } else if(qtrCount === 3){
+        if (handleHalftime) handleHalftime(qtrCount);
+      } else {
+        if (handleQuarter) handleQuarter(qtrCount);
+      }
+      reset();
     }
   }
 
@@ -66,11 +80,13 @@ var GameClock = function(quarterLength, renderCallback, quarterCallback, halftim
 
   var addSeconds = function(n){
     clock = clock + (n * 1000);
+    handleEvents();
     render();
   };
 
   var setTime = function(newTime){
     clock = moment(newTime, "mm:ss Z");
+    handleEvents();
     render();
   };
 

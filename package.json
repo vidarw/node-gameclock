@@ -4,7 +4,8 @@
   "description": "Gameclock for American football and similar sports. Callbacks for Quarter, Half-Time, Endgame. Functions for Start/Stop/Reset and Time Correction).",
   "main": "gameclock.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -13,6 +14,8 @@
   "author": "Vidar Waagbø <vidar@waagbo.com> (https://github.com/vidarw)",
   "license": "MIT",
   "dependencies": {
-    "moment": "^2.18.1"
+    "express": "^4.15.2",
+    "moment": "^2.18.1",
+    "socket.io": "^1.7.4"
   }
 }
