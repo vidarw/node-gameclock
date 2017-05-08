@@ -8,7 +8,7 @@ var socket = io();
 socket.on('update', function (data) {
   console.log(data);
   timerElement.innerHTML = data.time;
-  quarterElement.innerHTML = 'PERIOD ' + data.quarter;
+  quarterElement.innerHTML = 'PERIODE ' + data.quarter;
 });
 
 alert("Commands:\n\n<Space> Start/Stop\n<Backspace> Reset period\n<Shift><Backspace> Reset clock\n<+> Add 1 second\n<Shift><+> Add 10 seconds\n<-> Remove 1 second\n<Shift><-> Remove 10 seconds");
